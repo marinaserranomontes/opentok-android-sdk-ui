@@ -16,6 +16,7 @@ import com.opentok.android.Connection;
 import com.opentok.android.OpentokError;
 import com.opentok.android.Session;
 import com.opentok.android.Stream;
+import com.opentok.android.ui.TextChatSession;
 import com.opentok.android.ui.textchat.widget.ChatMessage;
 import com.opentok.android.ui.textchat.widget.TextChatFragment;
 
@@ -31,7 +32,7 @@ public class TextChatActivity extends FragmentActivity implements Session.Signal
     // Replace with your OpenTok API key
     public static final String API_KEY = "";
 
-    private Session mSession;
+    private TextChatSession mSession;
 
     private ProgressBar mLoadingBar;
 
@@ -115,7 +116,7 @@ public class TextChatActivity extends FragmentActivity implements Session.Signal
 
     private void sessionConnect() {
         if (mSession == null) {
-            mSession = new Session(TextChatActivity.this,
+            mSession = new TextChatSession(TextChatActivity.this,
                     API_KEY, SESSION_ID);
             mSession.setSignalListener(this);
             mSession.setSessionListener(this);
@@ -131,6 +132,10 @@ public class TextChatActivity extends FragmentActivity implements Session.Signal
 
         if (mTextChatFragment == null) {
             mTextChatFragment = new TextChatFragment();
+            Bundle args = new Bundle();
+            args.putSerializable("session", mSession);
+            mTextChatFragment.setArguments(args);
+
             mTextChatFragment.setMaxTextLength(1050);
             mTextChatFragment.setTextChatListener(this);
 
@@ -143,7 +148,7 @@ public class TextChatActivity extends FragmentActivity implements Session.Signal
         Log.d(LOGTAG, "TextChat listener: onMessageReadyToSend: " + msg.getText());
 
         if (mSession != null) {
-            msg.setSender(mSession.getConnection().getData());
+            msg.setSender("me");
             mSession.sendSignal(SIGNAL_TYPE, msg.getText());
         }
         return msgError;

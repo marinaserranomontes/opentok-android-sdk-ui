@@ -17,7 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.opentok.android.Session;
 
+import com.opentok.android.ui.TextChatSession;
 import com.opentok.android.ui.textchat.R;
 
 import java.util.ArrayList;
@@ -43,12 +45,13 @@ public class TextChatFragment extends Fragment {
     private TextView mMsgNotificationView;
     private View mMsgDividerView;
 
+    private TextChatSession mSession;
+
     private int maxTextLength = 1000; // by default the maximum length is 1000.
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
         mContext = activity.getApplicationContext();
     }
 
@@ -87,6 +90,10 @@ public class TextChatFragment extends Fragment {
                 return false;
             }
         });
+
+        Bundle args = getArguments();
+        mSession = (TextChatSession) args.getSerializable("session");
+        mSession.logAdHocAction("TextChat");
 
         return rootView;
     }
@@ -226,7 +233,7 @@ public class TextChatFragment extends Fragment {
      * Called when a message in the TextChatFragment is ready to send. A message is
      * ready to send when the user clicks the Send button in the TextChatFragment
      * user interface.
-     * 
+     *
      * If you subclass the TextChatFragment class and implement this method,
      * you do not need to set a TextChatListener.
      */
