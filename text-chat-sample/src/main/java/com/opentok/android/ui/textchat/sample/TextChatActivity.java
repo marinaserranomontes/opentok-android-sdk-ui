@@ -148,7 +148,7 @@ public class TextChatActivity extends FragmentActivity implements Session.Signal
         Log.d(LOGTAG, "TextChat listener: onMessageReadyToSend: " + msg.getText());
 
         if (mSession != null) {
-            msg.setSender("me");
+            msg.setSender(mSession.getConnection().getData());
             mSession.sendSignal(SIGNAL_TYPE, msg.getText());
         }
         return msgError;

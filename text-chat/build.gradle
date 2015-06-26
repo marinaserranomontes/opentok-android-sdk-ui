@@ -19,7 +19,6 @@ android {
     sourceSets.main {
         java {
             srcDir 'src/main/java'
-            jniLibs.srcDir '../jniLibs'
         }
     }
 
@@ -32,9 +31,12 @@ android {
             }
         }
     }
+    configurations {
+        provided
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile files('../libs/opentok-android-sdk.jar')
+    provided files('../openTokLibs/opentok-android-sdk.jar')
 }
