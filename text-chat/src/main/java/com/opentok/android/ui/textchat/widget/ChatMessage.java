@@ -31,16 +31,19 @@ public class ChatMessage {
     private UUID id;
 
     /**
-    * Construct a chat message that includes a message string and a sender identifier.
-    * @param senderId The string identifying the sender id of the message
+    * Construct a chat message that includes a message string, a sender identifier, and a sender
+    * alias.
     *
-    * @param sender The string identifying the sender of the message.
+    * @param senderId The unique ID string for the sender of the of the message. The
+    * TextChatFragment uses this ID to group messages from the same sender in the user interface.
+    *
+    * @param sender The string (alias) identifying the sender of the message.
     *
     * @param text The text of the message.
     */
     public ChatMessage(String senderId, String sender, String text) {
         if ( sender == null || senderId == null ) {
-            throw new IllegalArgumentException("The sender alias and the sender id cannot be null");
+            throw new IllegalArgumentException("The senderId and sender values cannot be null.");
         }
         this.senderId = senderId;
         this.sender = sender;
@@ -49,11 +52,13 @@ public class ChatMessage {
     }
 
     /**
-    * Construct a chat message that includes a message string, a sender identifier,
+    * Construct a chat message that includes a message string, a sender identifier, a sender alias
     * and the sent/recieved status.
-    * @param senderId The string identifying the sender id of the message.
     *
-    * @param sender The string identifying the sender alias of the message.
+    * @param senderId The unique ID string for the sender of the of the message. The
+    * TextChatFragment uses this ID to group messages from the same sender in the user interface.
+    *
+    * @param sender The string (alias) identifying the sender of the message.
     *
     * @param text The text of the message.
     *
@@ -61,7 +66,7 @@ public class ChatMessage {
     */
     public ChatMessage(String senderId, String sender, String text, MessageStatus status) {
         if ( sender == null || senderId == null) {
-            throw new IllegalArgumentException("The sender alias and the sender id cannot be null");
+            throw new IllegalArgumentException("The senderId and sender values cannot be null.");
         }
         this.senderId = senderId;
         this.sender = sender;
@@ -71,32 +76,32 @@ public class ChatMessage {
     }
 
     /**
-     * Returns the unique id of the sender.
+     * Returns the unique ID of the sender.
      */
     public String getSenderId() {
         return senderId;
     }
 
     /**
-     * Sets the unique id of the sender.
+     * Sets the unique ID of the sender.
      */
     public void setSenderId(String senderId) {
         this.senderId = senderId;
     }
 
     /**
-     * Returns the sender identifier of the message.
+     * Returns the sender alias for the message.
      */
     public String getSender() {
         return sender;
     }
 
     /**
-     * Sets the sender identifier of the message.
+     * Sets the sender alias for the message.
      */
     public void setSender(String sender) {
         if ( sender == null ) {
-            throw new IllegalArgumentException("The sender alias cannot be null");
+            throw new IllegalArgumentException("The sender value cannot be null.");
         }
         this.sender = sender;
     }
@@ -144,7 +149,8 @@ public class ChatMessage {
     }
 
     /**
-     * Returns the unique identifier for the message.
+     * Returns the unique identifier for the message. (This is a unique identifier for
+     * the message, not the sender.)
      */
     public UUID getId() {
         return id;

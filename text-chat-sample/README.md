@@ -15,7 +15,9 @@ A basic sample app showing the use of the OpenTok Android Text Chat UI sample
 4. Locate the armeabi and x86 directories in the OpenTok/libs directory of the OpenTok
    Android SDK, and drag them into the app/jniLibs directory of the project.
 
-5. In the com.opentok.android.ui.textchat.sample.TextChatActivity.java class, set the following
+5. Add the opentok-android-sdk-ui-1.0.aar file to the app/libs directory of the project.
+
+6. In the com.opentok.android.ui.textchat.sample.TextChatActivity.java class, set the following
    properties to a test OpenTok session ID, token, and API key:
 
    ```
@@ -24,10 +26,18 @@ A basic sample app showing the use of the OpenTok Android Text Chat UI sample
    private static final String APIKEY = "";
    ```
 
-   You can get your a test OpenTok session ID, a test token, and the API key at the
-   [OpenTok dashboard](https://dashboard.tokbox.com/).
+   For this sample app, you must set the connection data of the token to be the name of
+   (or identifier for) the user. This is used to identify the user's text messages
+   in the text chat user interface. For more information, see
+   [Connection data](https://tokbox.com/developer/guides/create-token/#connection-data).
 
-6. Debug the project on a supported device.
+
+   You can get a test OpenTok session ID, a test token, and your OpenTok API key at the
+   [OpenTok dashboard](https://dashboard.tokbox.com/). However, in a final application,
+   you must use the OpenTok server SDKs to generate a unique token for each user. See
+   the [Token creation overview](https://tokbox.com/developer/guides/create-token/).
+
+7. Debug the project on a supported device.
 
    For a list of supported devices, see the "Developer and client requirements"
    on [this page](https://tokbox.com/developer/sdks/android/).
@@ -47,11 +57,11 @@ instantiates a TextChatFragment instance and adds it to the UI:
 ```java
 if (mTextChatFragment == null)
 {
-    // 
     mTextChatFragment = new TextChatFragment();
-    mFragmentTransaction.add(containerId, mTextChatFragment, "TextChatFragment").commit();
-    mTextChatFragment.setTextChatListener(this);
     mTextChatFragment.setMaxTextLength(1050);
+    mTextChatFragment.setTextChatListener(this);
+    mTextChatFragment.setSenderInfo(mSession.getConnection().getConnectionId(),
+      mSession.getConnection().getData());
 }
 ```
 
@@ -64,6 +74,11 @@ interface.
 
 The code calls the `setMaxTextLength(length)` method of the TextChatFragment object to
 set the maximum length of the message.
+
+The code calls the `setSenderInfo(senderId, senderAlias)` method of the TextChatFragment object to
+set the sender ID and alias for the local client. The ID is set to the local client's
+OpenTok connection ID (a unique identifier), and the alias is set to the connection data
+added when you created a token for the user.
 
 The TextChatActivity class implements the `onMessageReadyToSend(msgStr)` method of the
 TextChatFragment.TextChatListener interface. This method is called when the user clicks the
@@ -84,15 +99,7 @@ The app uses the `Session.sendSignal(type, data)` method (defined by the OpenTok
 Android SDK) to send a message to the session. The signal `type` indicates that it is
 a text message. The signal's `data` is set to the text of the message to send.
 
-If the signal was sent by the local client and there is not any error, the text-chat fragment code calls to the ChatMessage constructor
-identifying the message as being a sent message and it calls the `addMessage(msg)` method too.
-
-```java
-msg = new ChatMessage("me", data, ChatMessage.MessageStatus.SENT_MESSAGE);
-```
-
-
-When the session is received, the implementation of the
+When the signal is received, the implementation of the
 `SignalListener.onSignalReceived(session, type, data, connection)` method (defined by the OpenTok
 Android SDK) is called:
 
@@ -102,7 +109,8 @@ public void onSignalReceived(Session session, String type, String data, Connecti
     Log.d(LOGTAG, "onSignalReceived. Type: "+ type + " data: "+data);
     ChatMessage msg;
     if (!connection.getConnectionId().equals(mSession.getConnection().getConnectionId())) {
-        msg = new ChatMessage(connection.getConnectionId().substring(1, 5), data, ChatMessage.MessageStatus.RECEIVED_MESSAGE);
+        msg = new ChatMessage(connection.getConnectionId(), connection.getData(), data,
+                              ChatMessage.MessageStatus.RECEIVED_MESSAGE);
         mTextChatFragment.addMessage(msg);
     }
 }
@@ -115,14 +123,17 @@ the sender of the message) and the text of the message.
 
 The code checks to see if the signal was sent by another client
 (`(!connection.getConnectionId().equals(mSession.getConnection().getConnectionId()))`).
-If it was, it sets the `sender` parameter of the ChatMessage constructor to the connection
-data you specify when creating the user's token (see
-[Token creation](https://tokbox.com/developer/guides/create-token/) ).. The second parameter of
-the constructor is the chat message text. The third parameter identifies it as a received message
-(which is reflected in the user interface when the TextChatFragment displays the message):
+If it was, it sets the `senderId` parameter of the ChatMessage constructor to the connection
+data you specified when creating the user's token (see
+[Token creation](https://tokbox.com/developer/guides/create-token/) ). The second parameter of
+the constructor is the sender alais, which identifies the user who sent the message. In this app,
+the alias is set as the connection data when you create a token for each user. The third parameter
+of the constructor is the chat message text. The fourth parameter identifies it as a received
+message (which is reflected in the user interface when the TextChatFragment displays the message):
 
 ```java
-msg = new ChatMessage(connection.getData(), data, ChatMessage.MessageStatus.RECEIVED_MESSAGE);
+msg = new ChatMessage(connection.getConnectionId(), connection.getData(), data,
+                      ChatMessage.MessageStatus.RECEIVED_MESSAGE);
 ```
 
 Note that you could use something other than the connection data to identify the sender
