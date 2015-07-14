@@ -50,6 +50,8 @@ public class TextChatFragment extends Fragment {
     private String senderId;
     private String senderAlias;
 
+    private boolean loggingTextChat = false;
+
     public TextChatFragment() {
         //Init the sender information for the output messages
         this.senderId = UUID.randomUUID().toString();
@@ -193,6 +195,15 @@ public class TextChatFragment extends Fragment {
                     mMsgCharsView.setTextColor(getResources().getColor(R.color.info));
                     mListView.smoothScrollToPosition(mMessageAdapter.getCount());
 
+                    if ( !loggingTextChat ) {
+                        Log.d(LOG_TAG, "Logging text-chat usage");
+                        //register text-chat usage
+                        Intent intent = new Intent();
+                        intent.setAction("com.opentok.android.log.event");
+                        intent.putExtra("event", "TextChat");
+                        mContext.sendBroadcast(intent);
+                        loggingTextChat = true;
+                    }
                     //add the message to the component
                     addMessage(myMsg);
                 }
