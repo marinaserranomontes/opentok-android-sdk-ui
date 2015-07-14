@@ -179,7 +179,9 @@ public class TextChatFragment extends Fragment {
                 showError();
             }
             else {
-                ChatMessage myMsg = new ChatMessage(senderId, senderAlias, msgStr, ChatMessage.MessageStatus.SENT_MESSAGE);
+                ChatMessage myMsg = new ChatMessage(senderId, senderAlias, msgStr);
+                myMsg.setStatus(ChatMessage.MessageStatus.SENT_MESSAGE);
+
                 boolean msgError = onMessageReadyToSend(myMsg);
 
                 if (msgError) {

@@ -52,30 +52,6 @@ public class ChatMessage {
     }
 
     /**
-    * Construct a chat message that includes a message string, a sender identifier, a sender alias
-    * and the sent/recieved status.
-    *
-    * @param senderId The unique ID string for the sender of the of the message. The
-    * TextChatFragment uses this ID to group messages from the same sender in the user interface.
-    *
-    * @param sender The string (alias) identifying the sender of the message.
-    *
-    * @param text The text of the message.
-    *
-    * @param status Whether the message was sent or received.
-    */
-    protected ChatMessage(String senderId, String sender, String text, MessageStatus status) {
-        if ( sender == null || senderId == null) {
-            throw new IllegalArgumentException("The senderId and sender values cannot be null.");
-        }
-        this.senderId = senderId;
-        this.senderAlias = sender;
-        this.text = text;
-        this.id= UUID.randomUUID();
-        this.status = status;
-    }
-
-    /**
      * Returns the unique ID of the sender.
      */
     public String getSenderId() {
