@@ -49,28 +49,6 @@ public class ChatMessage {
     }
 
     /**
-    * Construct a chat message that includes a message string, a sender identifier,
-    * and the sent/recieved status.
-    * @param senderId The string identifying the sender id of the message.
-    *
-    * @param sender The string identifying the sender alias of the message.
-    *
-    * @param text The text of the message.
-    *
-    * @param status Whether the message was sent or received.
-    */
-    protected ChatMessage(String senderId, String sender, String text, MessageStatus status) {
-        if ( sender == null || senderId == null) {
-            throw new IllegalArgumentException("The sender alias and the sender id cannot be null");
-        }
-        this.senderId = senderId;
-        this.sender = sender;
-        this.text = text;
-        this.id= UUID.randomUUID();
-        this.status = status;
-    }
-
-    /**
      * Returns the unique id of the sender.
      */
     public String getSenderId() {
